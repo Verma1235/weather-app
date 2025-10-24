@@ -167,8 +167,15 @@ $(document).ready(function () {
             console.log(getdata.current_weather);
 
             function dn() {
-                if (getdata.current_weather.is_day) return "Day";
-                else return "Neight";
+                if (getdata.current_weather.is_day) 
+                {
+                    
+                    return "Day";
+                }
+                else {
+                    $("body").css(`{background`:"black"});
+                    return "Night";
+                }
             }
 
             // alert("data fetched");
