@@ -169,7 +169,7 @@ $(document).ready(function () {
             function dn() {
                 if (getdata.current_weather.is_day) 
                 {
-                    
+                    $("body").css({background:"white"});
                     return "Day";
                 }
                 else {
