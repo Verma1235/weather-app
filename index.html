@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather</title>
+</head>
+
+<body>
+    <div class="card">
+        <!-- under this all the detail is laid down the  -->
+        <div class="search">
+            <!-- it is the container for the search part that is on the top -->
+            <form class="sub-cont" id="formSrc">
+                <input type="text" placeholder="Enter the city name" spellcheck="false" id="inputSearch">
+                <button type="submit"><img src="icons8-search-50.png" alt="search"></button>
+            </form>
+
+
+        </div>
+
+        <div class="weather">
+            <!-- this is meant to show the weather img and temp -->
+            <img src="weather.img/rain.png" alt="weatherImage" id="weather_img">
+            <h1 class="temperature" id="temp">28°C</h1>
+            <h2 class="city">New york</h2>
+            <div class="datacont">
+                <div class="subdatacont">
+                    <div class="sub-icon"> <i class="bi bi-water"></i></div>
+                    <div class="sub-data">
+                        <div class="data-percentage">...</div>
+                        <div><small id="dayNeight">Humidity</small></div>
+                    </div>
+                </div>
+                <div class="subdatacont">
+                      <div class="sub-icon"> <i class="bi bi-cloud-fog2"></i></div>
+                    <div class="sub-data">
+                        <div class="data-percentage" id="windSpeed">50 <small>km/h</small></div>
+                        <div><small>wind speed</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="info" >
+        <div class="sub-data" id="msg">
+
+        </div>
+
+    </div>
+<footer class="devloper">
+    <small>Dinesh verma !! &copy; right free 2025</small>
+</footer>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
