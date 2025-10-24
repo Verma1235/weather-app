@@ -18,7 +18,7 @@ $(document).ready(function () {
     let settemp = $("#temp");
     let setcity = $(".city");
     let setWindSpeed = $("#windSpeed");
-    let DayN=$("#dayNeight");
+    let DayN = $("#dayNeight");
 
 
 
@@ -135,12 +135,12 @@ $(document).ready(function () {
             let city = data.results[0];
 
             console.log(city);
-            let ImpData = [{
-                lon: city.latitude,
-                lat: city.latitude,
-                cityNAme: city.name,
-                country: city.country
-            }];
+            // let ImpData = [{
+            //     lon: city.latitude,
+            //     lat: city.latitude,
+            //     cityNAme: city.name,
+            //     country: city.country
+            // }];
 
 
             data ? setcity.html(city.name) : setcity.html("City name not exist");
@@ -156,44 +156,45 @@ $(document).ready(function () {
 
 
 
-            // *********************************  weather Api fetch acc to lon and lat ***********************************
+    // *********************************  weather Api fetch acc to lon and lat ***********************************
 
-            async function FetchWeather(latitude, longitude) {
-                let url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current_weather=true`;
-                try {
-                    let response = await fetch(url);
-                    let getdata = await response.json();
+    async function FetchWeather(latitude, longitude) {
+        let url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current_weather=true`;
+        try {
+            let response = await fetch(url);
+            let getdata = await response.json();
 
-                    console.log(getdata.current_weather);
+            console.log(getdata.current_weather);
 
-                    function dn(){
-                        if(getdata.current_weather.is_day) return "Day";
-                        else return "Neight";
-                    }
-
-                    // alert("data fetched");
-                    getdata ? (settemp.html(`${getdata.current_weather.temperature}°C`)) : settemp.html("0°C");
-                    getdata ? (setWindSpeed.html(`${Math.round(getdata.current_weather.windspeed)} km/h`)) : (setWindSpeed.html(` 0 km/h`));
-                    getdata ? weatherCode(getdata.current_weather.weathercode) : weatherCodeToText(1);
-                    getdata ? DayN.html(dn()) : DayN.html("...")  ;
-
-                    try{
-                    let now = getdata.current_weather.time; // e.g. "2025-10-24T15:30"
-                    let index = getdata.hourly.time.indexOf(now);
-                    let humidity = index !== -1 ? data.hourly.relativehumidity_2m[index] : null;
-                    console.log("Humidity:", humidity, "%");
-                    }catch{
-                          console.log("unable to get humidity data");
-                    }
-
-
-                } catch {
-                    console.warn("Api2 error !!");
-                    errorHandel(`May be your internet is slow (Api error) !!`);
-
-                }
+            function dn() {
+                if (getdata.current_weather.is_day) return "Day";
+                else return "Neight";
             }
-            // ****************************** end ************************************************
+
+            // alert("data fetched");
+            getdata ? (settemp.html(`${getdata.current_weather.temperature}°C`)) : settemp.html("0°C");
+            getdata ? (setWindSpeed.html(`${Math.round(getdata.current_weather.windspeed)} km/h`)) : (setWindSpeed.html(` 0 km/h`));
+            getdata ? weatherCode(getdata.current_weather.weathercode) : weatherCodeToText(1);
+            getdata ? DayN.html(dn()) : DayN.html("...");
+            // getdata ? setcity.html(getdata.current_weather.name) : setcity.html("City name not exist");
+
+            try {
+                let now = getdata.current_weather.time; // e.g. "2025-10-24T15:30"
+                let index = getdata.hourly.time.indexOf(now);
+                let humidity = index !== -1 ? data.hourly.relativehumidity_2m[index] : null;
+                console.log("Humidity:", humidity, "%");
+            } catch {
+                console.log("unable to get humidity data");
+            }
+
+
+        } catch {
+            console.warn("Api2 error !!");
+            errorHandel(`May be your internet is slow (Api error) !!`);
+
+        }
+    }
+    // ****************************** end ************************************************
 
 
 
@@ -208,11 +209,12 @@ $(document).ready(function () {
         reView();
         // errorHandel("work")
 
-        let inputObj = $("#inputSearch");
+        let inputObj = $("#inputSearch").val();
+        let inptdata = inputObj.trim();
 
-        if (inputObj.val() !== "") {
+        if (inptdata != "") {
 
-            searcByCityNAme(inputObj.val());
+            searcByCityNAme(inptdata);
 
         } else {
             alert("Enter correct city name...");
@@ -223,35 +225,50 @@ $(document).ready(function () {
     });
 
 
-// current location 
+    // current location 
 
-function getCurrentLocation(callback) {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Success
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                console.log("Latitude:", latitude, "Longitude:", longitude);
+    $(document).ready(function () {
 
-                if (callback && typeof callback === "function") {
-                    callback(latitude, longitude);
-                }
-            },
-            function(error) {
-                // Error
-                console.error("Error getting location:", error.message);
-                alert("Unable to get your location.");
+        function getCurrentCity(callback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async function (position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        console.log("Lat:", lat, "Lon:", lon);
+
+                        try {
+                            // Open-Meteo Reverse Geocoding API
+                            const url = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`;
+                            const res = await fetch(url);
+                            const data = await res.json();
+
+                            if (data.results && data.results.length > 0) {
+                                const city = data.results[0].name;
+                                console.log("City:", city);
+                                if (callback) callback(city, lat, lon);
+                            } else {
+                                console.warn("City not found");
+                            }
+                        } catch (err) {
+                            console.error("Reverse geocoding error:", err);
+                        }
+                    },
+                    function (error) {
+                        console.error("Geolocation error:", error.message);
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
             }
-        );
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
-}
+        }
 
+        // Example usage: get current city and fetch weather
+        getCurrentCity(function (cityName, lat, lon) {
+            setcity.html(cityName); // display city name
+            FetchWeather(lat, lon);  // your weather function
+        });
 
-    getCurrentLocation(function(lat, lon) {
-        FetchWeather(lat, lon); // your function to fetch weather
     });
 
 
