@@ -173,7 +173,7 @@ $(document).ready(function () {
                     return "Day";
                 }
                 else {
-                    $("body").css(`{background`:"black"});
+                    $("body").css({background:"black"});
                     return "Night";
                 }
             }
